@@ -1,0 +1,16 @@
+{
+  "short_name": "Vera Pro",
+  "name": "Vera Pro - Verified Professionals Marketplace",
+  "description": "Vetted professionals marketplace ensuring every deliverable is human-made through process verification, proctored tests, and content provenance.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#020617",
+  "background_color": "#020617",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

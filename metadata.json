@@ -1,0 +1,6 @@
+{
+  "name": "Vera Pro - Verified Professionals Marketplace",
+  "description": "Vetted professionals marketplace ensuring every deliverable is human-made through process verification, proctored tests, and content provenance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,230 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile document containing core account and authentication details.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "description": "User email address" },
+        "role": { "type": "string", "enum": ["client", "professional", "admin"], "description": "Platform role" },
+        "displayName": { "type": "string", "maxLength": 100, "description": "User full name" },
+        "photoURL": { "type": "string", "description": "Profile avatar URL" },
+        "phone": { "type": "string", "maxLength": 30, "description": "Phone number" },
+        "city": { "type": "string", "maxLength": 80, "description": "City of residence/work" },
+        "country": { "type": "string", "maxLength": 80, "description": "Country of residence/work" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" },
+        "updatedAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["uid", "email", "role", "displayName"]
+    },
+    "ProfessionalProfile": {
+      "title": "ProfessionalProfile",
+      "description": "Detailed verified professional profile with trust metrics and verification statuses.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Auth UID matching the professional" },
+        "category": { "type": "string", "enum": ["trades", "tech", "design", "creative", "services"], "description": "High level industry" },
+        "field": { "type": "string", "maxLength": 60, "description": "Specific craft or profession" },
+        "tier": { "type": "string", "enum": ["Verified", "Senior", "Expert"], "description": "Trust tier" },
+        "trustScore": { "type": "number", "description": "Trust score from 0 to 100" },
+        "bio": { "type": "string", "maxLength": 2000, "description": "Professional summary" },
+        "hourlyRate": { "type": "number", "description": "Standard rate or budget baseline" },
+        "currency": { "type": "string", "enum": ["NGN", "USD", "GBP", "EUR"], "description": "Currency code" },
+        "isRemoteCapable": { "type": "boolean", "description": "Whether professional can take international/remote contracts" },
+        "humanMadeAgreementSigned": { "type": "boolean", "description": "Signed strict no-AI-deliverables oath" },
+        "kycVerified": { "type": "boolean", "description": "Identity and liveness approved" },
+        "credentialsVerified": { "type": "boolean", "description": "Licenses and certifications checked" },
+        "testPassed": { "type": "boolean", "description": "Field-specific proctored test completed" },
+        "walkthroughCompleted": { "type": "boolean", "description": "Oral walkthrough verified" },
+        "processEvidenceVerified": { "type": "boolean", "description": "Raw/commit/source files verified" },
+        "provenanceVerified": { "type": "boolean", "description": "C2PA & metadata inspected" },
+        "completedJobsCount": { "type": "number", "description": "Total successfully escrow-released jobs" },
+        "averageRating": { "type": "number", "description": "Client review average out of 5" },
+        "penaltyStatus": { "type": "string", "enum": ["none", "warning", "badge_removed", "suspended", "banned"], "description": "Enforcement standing" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Update timestamp" }
+      },
+      "required": ["uid", "category", "field", "trustScore", "humanMadeAgreementSigned"]
+    },
+    "VerificationRecord": {
+      "title": "VerificationRecord",
+      "description": "Sensitive KYC document and live proctor session log for human review.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Record ID" },
+        "uid": { "type": "string", "description": "Candidate UID" },
+        "idType": { "type": "string", "description": "NIN, Voter Card, Passport, Driver License" },
+        "idNumberMasked": { "type": "string", "maxLength": 20, "description": "Masked ID number" },
+        "livenessConfidence": { "type": "number", "description": "Selfie liveness match confidence percentage" },
+        "credentialBodies": { "type": "string", "description": "e.g. ICAN, COREN, NIA, NSE" },
+        "resumeClaimsFlags": { "type": "string", "description": "Gemma AI inconsistency analysis summary" },
+        "status": { "type": "string", "enum": ["pending", "approved", "flagged", "rejected"], "description": "Status" },
+        "reviewedBy": { "type": "string", "description": "Admin UID" },
+        "reviewNotes": { "type": "string", "maxLength": 1000, "description": "Human reviewer notes" },
+        "createdAt": { "type": "string", "description": "Timestamp" }
+      },
+      "required": ["id", "uid", "status"]
+    },
+    "ProctoredTest": {
+      "title": "ProctoredTest",
+      "description": "Timed field-specific test and oral walkthrough session.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Test ID" },
+        "uid": { "type": "string", "description": "Candidate UID" },
+        "field": { "type": "string", "description": "Tested discipline" },
+        "taskBrief": { "type": "string", "description": "Custom dynamically generated task instructions" },
+        "timeLimitMinutes": { "type": "number", "description": "Duration" },
+        "tabSwitches": { "type": "number", "description": "Recorded window blur / tab switches" },
+        "screenRecordingActive": { "type": "boolean", "description": "Screen monitor confirmation" },
+        "cameraStreamActive": { "type": "boolean", "description": "Facial presence monitor confirmation" },
+        "practicalSubmission": { "type": "string", "description": "Candidate solution, code, or proof artifact" },
+        "oralWalkthroughNotes": { "type": "string", "description": "Oral explanation response transcripts" },
+        "consistencyScore": { "type": "number", "description": "AI probe consistency score out of 100" },
+        "reviewerVerdict": { "type": "string", "enum": ["pending", "pass", "borderline_review", "fail"], "description": "Outcome" },
+        "score": { "type": "number", "description": "Overall test score" },
+        "createdAt": { "type": "string", "description": "Timestamp" }
+      },
+      "required": ["id", "uid", "field", "reviewerVerdict"]
+    },
+    "ProcessEvidence": {
+      "title": "ProcessEvidence",
+      "description": "Proof artifact demonstrating human craft process (RAW EXIF, Git history, layered PSD/Figma, site photos).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Evidence ID" },
+        "uid": { "type": "string", "description": "Professional UID" },
+        "title": { "type": "string", "maxLength": 120, "description": "Artifact Title" },
+        "type": { "type": "string", "enum": ["raw_exif", "git_commits", "layered_file", "draft_revisions", "site_progress"], "description": "Proof category" },
+        "artifactUrl": { "type": "string", "description": "URL or mock reference" },
+        "metadataSummary": { "type": "string", "description": "EXIF camera model, Git hash chain, layers summary, geo coordinates" },
+        "c2paVerified": { "type": "boolean", "description": "C2PA / Content Credentials manifest presence" },
+        "aiConfidenceRisk": { "type": "number", "description": "Low 0-100 score indicating AI signature suspicion" },
+        "rating": { "type": "string", "enum": ["strong", "partial", "none"], "description": "Proof rating" },
+        "verified": { "type": "boolean", "description": "Verified status" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["id", "uid", "title", "type", "rating"]
+    },
+    "Job": {
+      "title": "Job",
+      "description": "Client job request with budget, timeline, and matching metadata.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Job ID" },
+        "clientId": { "type": "string", "description": "Client UID" },
+        "title": { "type": "string", "maxLength": 150, "description": "Job Title" },
+        "description": { "type": "string", "maxLength": 3000, "description": "Plain language job requirements" },
+        "category": { "type": "string", "description": "Classified category" },
+        "field": { "type": "string", "description": "Target profession" },
+        "budget": { "type": "number", "description": "Client budget" },
+        "currency": { "type": "string", "enum": ["NGN", "USD", "GBP", "EUR"], "description": "Currency code" },
+        "deadline": { "type": "string", "enum": ["24_hours", "3_days", "1_week", "2_weeks", "1_month"], "description": "Timeline urgency" },
+        "city": { "type": "string", "maxLength": 80, "description": "Local city requirement" },
+        "remoteAllowed": { "type": "boolean", "description": "Whether international/remote talent is eligible" },
+        "status": { "type": "string", "enum": ["open", "assigned", "in_escrow", "completed", "disputed", "cancelled"], "description": "Job stage" },
+        "hiredProfessionalId": { "type": "string", "description": "Chosen professional UID" },
+        "createdAt": { "type": "string", "description": "Job post date" },
+        "updatedAt": { "type": "string", "description": "Last update" }
+      },
+      "required": ["id", "clientId", "title", "description", "category", "budget", "status"]
+    },
+    "EscrowContract": {
+      "title": "EscrowContract",
+      "description": "Guaranteed escrow agreement securing client funds until process proof and deliverables are verified.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Escrow ID" },
+        "jobId": { "type": "string", "description": "Associated job ID" },
+        "clientId": { "type": "string", "description": "Client UID" },
+        "professionalId": { "type": "string", "description": "Professional UID" },
+        "amount": { "type": "number", "description": "Escrow balance" },
+        "currency": { "type": "string", "description": "Currency" },
+        "provider": { "type": "string", "enum": ["Paystack", "Flutterwave", "Remita", "VeraVault"], "description": "Payment Gateway" },
+        "status": { "type": "string", "enum": ["funded", "in_progress", "milestone_submitted", "client_confirmed", "released", "disputed", "refunded"], "description": "Contract status" },
+        "milestonesJson": { "type": "string", "description": "Milestone breakdowns and release gates" },
+        "deliverableProofUrl": { "type": "string", "description": "Final deliverable with process evidence" },
+        "disputeReason": { "type": "string", "maxLength": 1000, "description": "Client dispute grounds" },
+        "arbitrationVerdict": { "type": "string", "maxLength": 1000, "description": "Admin mediator notes" },
+        "createdAt": { "type": "string", "description": "Funding date" },
+        "updatedAt": { "type": "string", "description": "Timestamp" }
+      },
+      "required": ["id", "jobId", "clientId", "professionalId", "amount", "status"]
+    },
+    "ReportCase": {
+      "title": "ReportCase",
+      "description": "Client or system report of suspicious work, with penalty and appeal tracking.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Case ID" },
+        "reporterId": { "type": "string", "description": "Reporting user UID" },
+        "professionalId": { "type": "string", "description": "Reported pro UID" },
+        "jobId": { "type": "string", "description": "Job in question" },
+        "category": { "type": "string", "enum": ["suspected_ai_deliverable", "falsified_credentials", "test_dishonesty", "abandonment", "other"], "description": "Infraction type" },
+        "evidenceDescription": { "type": "string", "maxLength": 2000, "description": "Proof provided by reporter" },
+        "status": { "type": "string", "enum": ["open", "investigating", "resolved_penalty", "resolved_dismissed", "under_appeal"], "description": "Case status" },
+        "penalty": { "type": "string", "enum": ["none", "warning", "badge_removal", "suspension", "ban"], "description": "Applied action" },
+        "appealNotes": { "type": "string", "maxLength": 2000, "description": "Professional counter-evidence" },
+        "assignedReviewer": { "type": "string", "description": "Admin UID" },
+        "createdAt": { "type": "string", "description": "Report timestamp" }
+      },
+      "required": ["id", "reporterId", "professionalId", "category", "status"]
+    },
+    "PastReference": {
+      "title": "PastReference",
+      "description": "Verified client reference checked by platform representatives.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Reference ID" },
+        "professionalId": { "type": "string", "description": "Professional UID" },
+        "clientName": { "type": "string", "maxLength": 80, "description": "Past client name" },
+        "clientContact": { "type": "string", "maxLength": 80, "description": "Past client email or phone" },
+        "projectDescription": { "type": "string", "maxLength": 500, "description": "Work performed" },
+        "verificationStatus": { "type": "string", "enum": ["pending_contact", "confirmed_positive", "neutral", "flagged_fake"], "description": "Check outcome" },
+        "callNotes": { "type": "string", "maxLength": 500, "description": "Staff interview notes" },
+        "rating": { "type": "number", "description": "1 to 5 rating" },
+        "verifiedAt": { "type": "string", "description": "Date verified" }
+      },
+      "required": ["id", "professionalId", "clientName", "verificationStatus"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles for clients, professionals, and administrators."
+    },
+    "/professionals/{userId}": {
+      "schema": { "$ref": "#/entities/ProfessionalProfile" },
+      "description": "Public professional profile with trust tiers and verification badges."
+    },
+    "/verifications/{verificationId}": {
+      "schema": { "$ref": "#/entities/VerificationRecord" },
+      "description": "Sensitive identity and KYC review records accessible only to applicant and admins."
+    },
+    "/tests/{testId}": {
+      "schema": { "$ref": "#/entities/ProctoredTest" },
+      "description": "Proctored live test and oral walkthrough transcripts."
+    },
+    "/evidence/{evidenceId}": {
+      "schema": { "$ref": "#/entities/ProcessEvidence" },
+      "description": "Process proof files, EXIF metadata, and commit analysis."
+    },
+    "/jobs/{jobId}": {
+      "schema": { "$ref": "#/entities/Job" },
+      "description": "Marketplace job postings."
+    },
+    "/escrows/{escrowId}": {
+      "schema": { "$ref": "#/entities/EscrowContract" },
+      "description": "Escrow agreements with milestone release gates."
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/ReportCase" },
+      "description": "Trust & Safety enforcement cases and appeals."
+    },
+    "/references/{referenceId}": {
+      "schema": { "$ref": "#/entities/PastReference" },
+      "description": "Third-party verified client references."
+    }
+  }
+}
